@@ -4,13 +4,16 @@ const favicon      = require('serve-favicon');
 const logger       = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser   = require('body-parser');
+const layouts  = require('express-ejs-layouts');
+const mongoose = require('mongoose');
 
+mongoose.connect('mongodb://localhost/celebritymovies');
 
 const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 
 // default value for title local
 app.locals.title = 'Express - Generated with IronGenerator';
@@ -22,9 +25,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(layouts);
 
 const index = require('./routes/index');
 app.use('/', index);
+
+const celebrityRoute = require('./routes/celebrity-routes');
+app.use(celebrityRoute);
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
